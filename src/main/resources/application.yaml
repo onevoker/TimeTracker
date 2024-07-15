@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: TimeTracker
+  # migrations run in the compose.yaml
+  liquibase:
+    enabled: false
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+security-properties:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+    token-lifetime: 3600s
+  claim-names:
+    username-claim-name: username
+    authorities_claim_name: authorities
+  security-filter-properties:
+    permit-all-requests:
+      - "/auth/**"
+      - "/swagger-ui/**"
+      - "/swagger-ui.html"
+      - "/v3/api-docs/**"
+      - "/v2/api-docs/**"
+    security-url-pattern: "/**"

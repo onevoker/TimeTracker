@@ -1,0 +1,34 @@
+services:
+  postgresql:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+
+  liquibase-migrations:
+    image: liquibase/liquibase:4.27
+    depends_on:
+      - postgresql
+    env_file:
+      - .env
+    command:
+      - --changelog-file=master.xml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://postgresql:5432/${POSTGRES_DB}
+      - --username=${POSTGRES_USER}
+      - --password=${POSTGRES_PASSWORD}
+      - update
+    volumes:
+      - ./migrations:/liquibase/lib
+
+  app:
+    build: .
+    container_name: "timetracker"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgresql
+      - liquibase-migrations
+    env_file:
+      - .env
